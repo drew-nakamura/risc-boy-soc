@@ -1,0 +1,13 @@
+<mxfile host="Electron">
+  <diagram name="Page-1" id="c5bUziKBVqfAbln2RCE2">
+    <mxGraphModel dx="1207" dy="1008" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="fRvuMUteokgG2q4ByHVG-1" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;" value="Mutli-Cycle CPU with interupts&lt;div&gt;32 Bit&lt;/div&gt;&lt;div&gt;RISC-V&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="100" x="380" y="350" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
