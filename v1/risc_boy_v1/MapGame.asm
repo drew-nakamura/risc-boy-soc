@@ -59,7 +59,6 @@ main:
 # Game logic -----------------------------------
 game_loop:
     li t3, 0x4000	# Joy-Con MMIO
-    li t3, 8 #TEMPORARY FOR SIM, DELETE LATER
     lw t4, 0(t3)	# Button Read
     
     li t0, 0x4000	# MMIO
