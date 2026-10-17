@@ -72,6 +72,7 @@ module MCU_WRAPPER(
     );
 
    Interconnect Interconnect(
+        .CLK(clk_50),
         .address(IOBUS_addr),
         .WE(IOBUS_WE),
         .RDEN(IOBUS_RDEN),
@@ -137,7 +138,7 @@ module MCU_WRAPPER(
     );
 
     VRAM VRAM_module(
-        .clk(CLK_50),
+        .clk(clk_50),
         //PORT 1 is going to be for CPU (READ + WRITE)
         .ADDR1(IOBUS_addr - VRAM_OFFSET), //1024 rows, therefore, only 10 bits will be utlilized later 
         .RDEN1(VRAM_RDEN),

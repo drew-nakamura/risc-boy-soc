@@ -320,13 +320,12 @@ module CPU_TOP(
         ex_mem_d.mem_sign = id_ex_q.mem_sign;
         ex_mem_d.memRDEN = id_ex_q.memRDEN;
         ex_mem_d.memWE = id_ex_q.memWE;
-        ex_mem_d.DATA_IN = IOBUS_IN;
         mem_data = {id_ex_q.mem_size, id_ex_q.mem_sign};
         DATA_ADDRESS = ALU_result;
         DATA_OUT = real_rs2;
-
+        //YO SOMETIHNG IS WEIRD WITH REAL RSW IN COMBINAITON WITH LW AND SW, 
         IOBUS_RDEN = id_ex_q.memRDEN;
-        IOBUS_WE = id_ex_q.memWE;
+        IOBUS_WE = (id_ex_q.memWE && !FORW_FLUSH_EX_MEM);
         ex_mem_d.instruction = id_ex_q.instruction;
     end
 
@@ -343,6 +342,7 @@ module CPU_TOP(
     end
 
     always_comb begin
+        mem_wb_d.DATA_IN = IOBUS_IN;
         mem_wb_d.RF_WE = ex_mem_q.RF_WE;
         mem_wb_d.reg_write_addr = ex_mem_q.reg_write_addr;
         mem_wb_d.instruction = ex_mem_q.instruction;
@@ -363,7 +363,7 @@ module CPU_TOP(
     FOUR_TO_ONE_MUX reg_MUX(
         .A(ex_mem_q.PC + 4),
         .B('X),
-        .C(ex_mem_q.DATA_IN), // load data from MEM
+        .C(IOBUS_IN), // load data from MEM
         .D(ex_mem_q.ALU_result),
         .SEL(ex_mem_q.RF_SEL),
         .OUT(write_data)

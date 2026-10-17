@@ -66,8 +66,6 @@ module Control_Unit_Decoder(
             srcA_SEL =  srca_U_TYPE;
             srcB_SEL = srcb_PC;
             RF_SEL = WB_ALU;
-            memRDEN = 0;
-            memWE = 0;
             RF_WE = 1'b1;
         end
     

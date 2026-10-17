@@ -121,6 +121,7 @@ typedef struct packed {
 
 typedef struct packed {
     logic RF_WE;
+    logic [31:0] DATA_IN;
     logic [4:0] reg_write_addr;
     logic [31:0] REG_write_data;
     instr_name_e instruction;
