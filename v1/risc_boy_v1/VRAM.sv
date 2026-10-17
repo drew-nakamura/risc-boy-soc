@@ -44,7 +44,7 @@ module VRAM(
     
     initial
     begin
-    
+    /* MANUALLY WRITTEN MAZE 1
     int i;
     
     memory[0] =  {32{1'b0}};
@@ -73,86 +73,16 @@ module VRAM(
     memory[23] = {32{1'b0}};
 
     
-    memory[24] =  { {12{1'b0}} , 10'b1110000100 };//sprite x is at 900 
-    memory[25] =  { {12{1'b0}} , 10'b1110000100 };//sprite y is at 900
-    
-     for(i = 26; i <= 1023; i++)//non junk values for the rest of mem
-        begin
-            memory[i] = {32{1'b0}}; //make white should not be seen 
-        end
-    
-    /*
-    int i;
-    memory[0] = {1'b1 ,{30{1'b0}} , 1'b1 }; //square on top corners
-        
-        for(i = 1; i <= 22; i++) //the grid that PPU will be filling in 
-        begin
-            memory[i] = {32{1'b0}}; 
-        end
-        
-    memory[23] = {1'b1 ,{30{1'b0}} , 1'b1 }; //square on bottom corners
-    
-    memory[24] =  { {12{1'b0}} , 10'b1110000100 };//sprite x is at 900 
-    memory[25] =  { {12{1'b0}} , 10'b1110000100 };//sprite y is at 900
+    memory[24] =  { {30{1'b0}} , 2'b10 };//sprite x is at blk 2
+    memory[25] =  { {30{1'b0}} , 2'b10 };//sprite y is at blk 2
     
      for(i = 26; i <= 1023; i++)//non junk values for the rest of mem
         begin
             memory[i] = {32{1'b0}}; //make white should not be seen 
         end
     */
-    //SMILEY
-    
-    /*
-        int i;
-        memory[0] = {32{1'b0}}; 
-        memory[1] = {32{1'b0}}; 
-        memory[2] = {32{1'b0}}; 
-        
-        memory[3] = { {14{1'b0}} , 1'b1, 2'b00  , 1'b1 , {14{1'b0}} }; //the eyes
-        memory[4] = {32{1'b0}}; 
-        memory[5] = {32{1'b0}}; 
-        memory[6] = { {12{1'b0}} , 1'b1, 6'b00  , 1'b1 , {12{1'b0}}  }; //upbrdige of mouth
-        memory[7] = { {12{1'b0}} , {8{1'b1}}  , {12{1'b0}} }; //conect smile
-        
-        for(i = 8; i <= 23; i++) //the grid that PPU will be filling in 
-        begin
-            memory[i] = {32{1'b0}}; 
-        end
-        
-        memory[24] =  { {12{1'b0}} , 10'b1110000100 };//sprite x is at 900 
-        memory[25] =  { {12{1'b0}} , 10'b1110000100 };//sprite y is at 900
-    
-        for(i = 26; i <= 1023; i++)//non junk values for the rest of mem
-            begin
-                memory[i] = {32{1'b0}}; //make white should not be seen 
-            end
-    */
-    //STRIPES
-    /*
-        int i;
-        
-        for(i = 0; i <= 23; i++) //the grid that PPU will be filling in 
-        begin
-            if(i % 2 == 0) //all even grid rows are 0 (red)
-            begin
-                memory[i] = {32{1'b1}}; 
-            end
-            else //all odd grif rows are 1 (white)
-            begin 
-                memory[i] = {32{1'b0}}; 
-            end
-        end
-        
-        memory[24] =  { {12{1'b0}} , 10'b0101000000 };//sprite x is at 320 
-        memory[25] =  { {12{1'b0}} , 10'b0011110000 };//sprite y is at 240
-        
-        for(i = 26; i <= 1023; i++)//non junk values for the rest of mem
-        begin
-            memory[i] = {32{1'b0}}; //make white should not be seen 
-        end
-*/
  
-//readmemh("VRAM_Map_1_Test.mem", memory, 0, 1023);
+    readmemh("VRAM_Map_1_Test.mem", memory, 0, 1023);
 
  
        
