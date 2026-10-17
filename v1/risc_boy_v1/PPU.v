@@ -24,8 +24,6 @@ module PPU(
     input CLK_25,
     input [9:0] pos_x, //from VGA controller, current pixel to draw
     input [9:0] pos_y, //from VGA controller
-    //input [31:0] sprite_x, //Read from VRAM: current pos of sprite's top left pixel of the 20x20 blk
-    //input [31:0] sprite_y, 
     input [31:0] pixel_data, //from VRAM, check for which bits in palette reg
     input [31:0] sprite_x_addr, // address to read sprite x
     input [31:0] sprite_y_addr, // address to read sprite y 
@@ -115,16 +113,22 @@ module PPU(
         end
     end  
   
-  
+    /*OLD LOGIC, SPRITE LOCATION GIVEN IN BLKS NOT PIXELS!!!
     //VGA speaks in pixels, PPU speaks in blks, trying to decipher if current pixel is within sprite blk
     assign sprite_hit_x = (pos_x >= sprite_x[9:0]) && (pos_x <= sprite_x[9:0] + 19);
     assign sprite_hit_y = (pos_y >= sprite_y[9:0]) && (pos_y <= sprite_y[9:0] + 19);
+    */
     
     always@(*)
     begin
         blk_x = pos_x / 20 ; //pixel # / 20 pixels = blk # (which bit in word (which blk))
         blk_y = pos_y / 20;  //pixel # / 20 pixels = blk # (which memory row)      
     end
+    
+    //after converting current pixel to blk, if current blk is the space in which the sprite takes up
+    
+     assign sprite_hit_x = ( blk_x == sprite_x[4:0]); 
+     assign sprite_hit_y = ( blk_y == sprite_y[4:0]);
     
     always @(*)
     begin
@@ -142,7 +146,7 @@ module PPU(
             if(sprite_hit_x && sprite_hit_y)
             begin
                 //current block should be sprite
-                RGB = 12'h000;      
+                RGB = 12'hF00;      
             end
             
             else
@@ -159,7 +163,7 @@ module PPU(
                 if(pixel_data[blk_x] == 0)
                     RGB = 12'hFFF; //white
                 else
-                    RGB = 12'h000; //black for testing
+                    RGB = 12'h00F; //blue for funsies
                     
            end
         end
