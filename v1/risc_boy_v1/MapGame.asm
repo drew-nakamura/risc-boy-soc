@@ -55,7 +55,7 @@ LEVEL:
 .text
 
 main:
-    li sp, 0x4ffc
+    li sp, 0x2ffc
     jal load_level_1
     j game_loop
     
