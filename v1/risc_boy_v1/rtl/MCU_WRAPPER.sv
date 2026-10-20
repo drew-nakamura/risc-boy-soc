@@ -127,8 +127,8 @@ module MCU_WRAPPER(
         
         //Hardcoded to be  pixel off the screen for testing
         //900 for x and y 
-        .sprite_x_addr(32'h00001004), //address to sprite x location (in hex)
-        .sprite_y_addr(32'h00001008), //address to sprite y location (in hex)
+        .sprite_x_addr(32'h00000404), //address to sprite x location (in hex)
+        .sprite_y_addr(32'h00000408), //address to sprite y location (in hex)
         
         .pixel_data(pixel_data), //[31:0] from VRAM, check for which bits in palette reg
         .video_on(video_on & VID_ON), //from VGA controller + if reset is not asserted

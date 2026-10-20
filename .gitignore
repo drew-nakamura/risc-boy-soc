@@ -1,0 +1,24 @@
+# Local Vivado project. Recreate it on each machine; do not commit it.
+v1/v1_vivado/
+
+# Vivado / Xilinx build products, in case a project is created somewhere else
+*.cache/
+*.gen/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+.Xil/
+*.jou
+*.log
+*.str
+*.pb
+*.wdf
+*.wpc
+*.dcp
+*.vdi
+*.lpr
+
+# Editor backups
+*.bkp
+*~

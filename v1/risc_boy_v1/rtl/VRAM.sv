@@ -82,9 +82,6 @@ module VRAM(
         end
     */
  
-    readmemh("VRAM_Map_1_Test.mem", memory, 0, 1023);
-
- 
        
     end
     
