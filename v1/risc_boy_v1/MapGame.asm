@@ -61,7 +61,7 @@ game_loop:
     li t3, 0x4000	# Joy-Con MMIO
     lw t4, 0(t3)	# Button Read
     
-    li t0, 0x4000	# MMIO
+    li t0, 0x3400	# Player positions
     lw t1, 4(t0)	# t1 = x position
     lw t2, 8(t0)	# t2 = y position
     
