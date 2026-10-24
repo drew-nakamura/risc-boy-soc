@@ -1,6 +1,8 @@
 #IMEM: 0-FFF
 #WMEM(DRAM): 1000-2FFF
 #VRAM: 3000-3FFF
+	#Player X: 3404
+	#Player Y: 3408
 #MMIO: 4000
     #Joy-Con/Buttons: 4000 4LSB
     #Player X: 4004
@@ -53,7 +55,7 @@ LEVEL:
 .text
 
 main:
-    li sp, 0x4ffc
+    li sp, 0x2ffc
     jal load_level_1
     j game_loop
     
@@ -206,7 +208,7 @@ copy_map: # a0 = VRAM address, a1 = Map, a2 = Number of words in Map
     
 # Send new player location to MMIO
 update_player: # a0 = new x, a1 = new y
-    li t0, 0x4000
+    li t0, 0x3400
     sw a0, 4(t0)
     sw a1, 8(t0)
     ret

@@ -13,7 +13,11 @@
 // 
 // Dependencies: 
 // 
-// Revision:
+// Revision: 10-24-26: As the PPU recieves the sprite location from the CPU (who speaks with byte addys)
+//                      when the PPU enters that sprite addy to VRAM , it will need VRAM to read the PPU addy in bytes.
+//                      Previously, we had the PPU write in terms of word adresses to align with the blk math.
+//                      Instead now, the PPU and VRAM was changed such that they speak to each other in byte addys to 
+//                      keep everything consistent. 
 // Revision 0.01 - File Created
 // Additional Comments:
 // 
@@ -108,7 +112,7 @@ module PPU(
             //and blk_x will take us to the correct bit(blk) within the row 
        
                 RDEN <= 1'b1;
-                pixel_addr <= blk_y;
+                pixel_addr <= blk_y << 2; //byte addressable conversion
            end
         end
     end  

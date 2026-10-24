@@ -44,45 +44,7 @@ module VRAM(
     
     initial
     begin
-    /* MANUALLY WRITTEN MAZE 1
-    int i;
-    
-    memory[0] =  {32{1'b0}};
-    memory[1] =  {32{1'b0}};
-    memory[2] =  {32{1'b0}};
-    memory[3] =  {32{1'b0}};
-    memory[4] =  {32{1'b0}};
-    memory[5] =  {32{1'b0}};
-    memory[6] =  {32{1'b0}};
-    memory[7] =  {32{1'b0}};
-    memory[8] =  32'b00000000000011111111000000000000;
-    memory[9] =  32'b00000000000011111111000000000000;
-    memory[10] = 32'b00000000000011111111000000000000;
-    memory[11] = 32'b00000000000011111111000000000000;
-    memory[12] = 32'b00000000000011111111000000000000;
-    memory[13] = 32'b00000000000011111111000000000000;
-    memory[14] = 32'b00000000000011111111000000000000;
-    memory[15] = 32'b00000000000011111111000000000000;
-    memory[16] = {32{1'b0}};
-    memory[17] = {32{1'b0}};
-    memory[18] = {32{1'b0}};
-    memory[19] = {32{1'b0}};
-    memory[20] = 32'b01010000000000000000000000000000; 
-    memory[21] = 32'b00100000000000000000000000000000;
-    memory[22] = 32'b01010000000000000000000000000000;
-    memory[23] = {32{1'b0}};
-
-    
-    memory[24] =  { {30{1'b0}} , 2'b10 };//sprite x is at blk 2
-    memory[25] =  { {30{1'b0}} , 2'b10 };//sprite y is at blk 2
-    
-     for(i = 26; i <= 1023; i++)//non junk values for the rest of mem
-        begin
-            memory[i] = {32{1'b0}}; //make white should not be seen 
-        end
-    */
- 
-       
+        $readmemh("VRAM_Map_1_Test.mem", memory, 0, 1023);
     end
     
     reg [9:0] chopped_addr1;
@@ -92,30 +54,24 @@ module VRAM(
     reg [31:0] memReadSized;
     reg [31:0] mem_scaled;
   
-    
-    /*
-    assign chopped_addr1 = ADDR1[11:2]; //spliced CPU addr
-    assign byte_offset1 = ADDR1[1:0];
-    
-    assign chopped_addr2 = ADDR2[9:0]; //spliced PPU addr
-    */
-    
+
     assign chopped_addr1 = ADDR1 >> 2; 
     assign byte_offset1 = ADDR1[1:0];
     
-    assign chopped_addr2 = ADDR2[9:0]; //also contains the offset
+    assign chopped_addr2 = ADDR2 >> 2; //get rid of byte offset
     
     
     always_ff@(posedge clk)
     begin
         //READING VRAM
-        if(RDEN1) //CPU reads, not full word
+        if(RDEN1) //CPU reads
         begin
             memReadSized <= memory[chopped_addr1];
         end
         
         if(RDEN2) //PPU reads always the full word
         begin
+            //memReadSized <= memory[chopped_addr2];
             DOUT2 <= memory[chopped_addr2];
         end
               
@@ -144,7 +100,7 @@ module VRAM(
             5'b1_00_00: mem_scaled = {{24{1'b0}}, memReadSized[7:0]}; //unsigned byte 0 
             5'b1_00_01: mem_scaled = {{24{1'b0}}, memReadSized[15:8]}; //unsigned byte 1
             5'b1_00_10: mem_scaled = {{24{1'b0}}, memReadSized[23:16]}; //unsigned byte 2
-            5'b1_00_11: mem_scaled = {{24{1'b0}}, memReadSized[31:23]}; //unsigned byte 3
+            5'b1_00_11: mem_scaled = {{24{1'b0}}, memReadSized[31:24]}; //unsigned byte 3
             
             5'b1_01_00: mem_scaled = {{16{1'b0}}, memReadSized[15:0]}; //unsigned half 0
             5'b1_01_01: mem_scaled = {{16{1'b0}}, memReadSized[23:8]}; //unsigned half 1 FOR MISALIGNED READS
@@ -164,14 +120,14 @@ module VRAM(
         begin
             case({SIZE1, byte_offset1})
             //SIZE: 0-Byte, 1-Half, 2-Word
-                4'b00_00: memory[chopped_addr1] <= DIN1[7:0];//byte 0
-                4'b00_01: memory[chopped_addr1] <= DIN1[7:0];//byte 1
-                4'b00_10: memory[chopped_addr1] <= DIN1[7:0];//byte 2
-                4'b00_11: memory[chopped_addr1] <= DIN1[7:0];//byte 3
+                4'b00_00: memory[chopped_addr1][7:0] <= DIN1[7:0];//byte 0
+                4'b00_01: memory[chopped_addr1][15:8] <= DIN1[7:0];//byte 1
+                4'b00_10: memory[chopped_addr1][23:16] <= DIN1[7:0];//byte 2
+                4'b00_11: memory[chopped_addr1][31:24] <= DIN1[7:0];//byte 3
                 
-                4'b01_00: memory[chopped_addr1] <= DIN1[15:0]; //half 0
-                4'b01_01: memory[chopped_addr1] <= DIN1[23:8]; //half 1 FOR MISALIGNED WRITES
-                4'b01_10: memory[chopped_addr1] <= DIN1[31:16]; //half 2
+                4'b01_00: memory[chopped_addr1][15:0] <= DIN1[15:0]; //half 0
+                4'b01_01: memory[chopped_addr1][23:8] <= DIN1[23:8]; //half 1 FOR MISALIGNED WRITES
+                4'b01_10: memory[chopped_addr1][31:16] <= DIN1[31:16]; //half 2
                 
                 4'b10_00: memory[chopped_addr1] <= DIN1; //full word
                 
@@ -182,6 +138,7 @@ module VRAM(
     always_comb
     begin 
         DOUT1 = mem_scaled;
+       // DOUT2 = mem_scaled;
     end 
     
     

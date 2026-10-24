@@ -43,11 +43,6 @@ module Interconnect(
                 32'h11000000: ;
                 32'h11000020: LEDS_WE = WE;
                 32'h11000040: if (WE) SSEG_WE = 1'b1;
-                32'h4008, 32'h4004: begin
-                    VRAM_WE   = WE;
-                    VRAM_RDEN = RDEN;
-                end
-                32'h4000: ;
             endcase
         end else if (address >= 32'h3000) begin
             VRAM_WE   = WE;
