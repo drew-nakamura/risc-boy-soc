@@ -141,8 +141,8 @@ load_level_1:
     la a1, MAP1           # pointer to MAP
     li a2, 24            # number of words in MAP
     jal copy_map
-    li a0, 2
-    li a1, 2
+    li a0, 27 #changed temporarily from 2 for drews simulation
+    li a1, 21 #this one too
     jal update_player
     li a0, 28
     li a1, 20
