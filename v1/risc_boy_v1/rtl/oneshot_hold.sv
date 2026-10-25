@@ -22,7 +22,8 @@ module oneshot_hold #(
     
     logic [3:0] sync1, sync2;
     logic [COUNT_WIDTH-1:0] count;
-    logic HOLD;
+    logic [COUNT_WIDTH-1:0] hold_count;
+    logic arm, hold;
     // Synchronize the physical button to our clock.
     always_ff @(posedge clk) begin
         if (rst) begin
@@ -38,11 +39,11 @@ module oneshot_hold #(
     always_ff @(posedge clk) begin
         if (rst) begin
             count <= '0;
-            HOLD <= 1'b1;
+            arm <= 1'b1;
             button_pulse <= 1'b0;
         end else if(!on) begin
             button_pulse <= button_raw;
-            HOLD <= 1'b1;
+            arm <= 1'b1;
             count <= '0;
         end
         else begin
@@ -51,12 +52,16 @@ module oneshot_hold #(
                 count <= count - 1'b1;
             end
             else if(!sync2) begin
-                HOLD <= 1;
+                arm <= 1;
             end
-            else if(HOLD) begin
+            else if(arm) begin
                 button_pulse <= sync2;
-                HOLD <= 1'b0;
-                count <= CYCLES;
+                arm <= 1'b0;
+                hold_count <= 50;
+            end else if(hold_count) begin
+                button_pulse <= button_pulse;
+                hold_count = hold_count - 1'b1;
+                if(!hold_count) count <= CYCLES;
             end
         end
     end

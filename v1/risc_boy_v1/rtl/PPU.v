@@ -108,7 +108,7 @@ module PPU(
             //and blk_x will take us to the correct bit(blk) within the row 
        
                 RDEN <= 1'b1;
-                pixel_addr <= blk_y;
+                pixel_addr <= (blk_y << 2);
            end
         end
     end  
