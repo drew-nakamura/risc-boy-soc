@@ -59,7 +59,7 @@ module MCU_WRAPPER(
     logic clk_50; //50 MHz clock
     logic clk_25; //25 Mhz clock
     logic s_reset;
-    logic [3:0] debounced_BTNS;
+    logic [3:0] pulsed_BTNS;
 
    CPU_TOP CPU_TOP(
         .RST(s_reset),
@@ -80,7 +80,7 @@ module MCU_WRAPPER(
         .DMEM_DATA(DMEM_DATA),
         .VRAM_DATA(VRAM_DATA),
         .SWITCHES({16'b0,SWITCHES}),
-        .BUTTONS({28'b0, debounced_BTNS}),
+        .BUTTONS({28'b0, pulsed_BTNS}),
         .DMEM_RDEN(DMEM_RDEN),
         .DMEM_WE(DMEM_WE),
         .LEDS_WE(LEDS_WE),
@@ -90,14 +90,14 @@ module MCU_WRAPPER(
         .IOBUS_in(IOBUS_in)
    );
 
-   debounce #(
-    .DEBOUNCE_CYCLES(1_000_000)
-    ) u_debounce (
+   oneshot_hold #(
+    .CYCLES(100_000)
+    ) oneshot_hold (
         .clk          (CLK),
-        .on           (1'b0),
+        .on           (1'b1),
         .rst          (s_reset),
         .button_raw   (BTNS),
-        .button_clean (debounced_BTNS)
+        .button_pulse (pulsed_BTNS)
     );
 
    DMEM DATA_MEMORY(

@@ -34,7 +34,6 @@ module VRAM(
     input RDEN2,
     input [1:0] SIZE1, //this is only for CPU, 0-Byte, 1-Half, 2-Word
     input SIGN1, //this is only for CPU, 1-Unsigned, 0-Signed
-    
     output reg [31:0] DOUT1,
     output reg [31:0] DOUT2
     );
@@ -42,17 +41,17 @@ module VRAM(
     (* rom_style="{block}" *) //Tell Vivado that VRAM should be stored in BRAM 
     logic [31:0] memory [0:1023]; // allocate space into array memory for 4KB
     
-    initial
-    begin
-        $readmemh("VRAM_Map_1_Test.mem", memory, 0, 1023);
-    end
-    
     reg [9:0] chopped_addr1;
     reg [9:0] chopped_addr2;
     
     reg [1:0] byte_offset1;
     reg [31:0] memReadSized;
     reg [31:0] mem_scaled;
+    
+    logic [1:0] buf_byte_offset1;
+    logic [1:0] buf_SIZE1;
+    logic buf_SIGN1;
+    
   
 
     assign chopped_addr1 = ADDR1 >> 2; 
@@ -67,6 +66,9 @@ module VRAM(
         if(RDEN1) //CPU reads
         begin
             memReadSized <= memory[chopped_addr1];
+            buf_byte_offset1 <= byte_offset1;
+            buf_SIZE1 <= SIZE1;
+            buf_SIGN1 <= SIGN1;
         end
         
         if(RDEN2) //PPU reads always the full word
@@ -84,7 +86,7 @@ module VRAM(
         //Scaling data coming out
         /*RISC instructions such lb, lhu, are the reason for SIZE and SIGN values and this case statement
           Since the PPU will also ask for the complete word, the PPU will not need to complete this scaling*/
-        case({SIGN1 ,SIZE1, byte_offset1})
+        case({buf_SIGN1 ,buf_SIZE1, buf_byte_offset1})
        //SIZE: 0-Byte, 1-Half, 2-Word
        //SIGN: 1-Unsigned, 0-Signed
         

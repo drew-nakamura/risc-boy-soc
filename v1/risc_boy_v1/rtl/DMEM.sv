@@ -38,7 +38,8 @@ module DMEM #(
     logic [10:0] wordAddress;
     logic [1:0] mem_size, byteOffset;
     logic mem_sign;
-
+    logic [1:0] buf_mem_size, buf_byteOffset;
+    logic buf_mem_sign;
 
     (* ram_style="{distributed | block}" *)
     (* ram_decomp = "power " *)
@@ -72,6 +73,10 @@ module DMEM #(
 
         if (RDEN)
             memReadWord <= memory[wordAddress];
+            buf_mem_size <= mem_size;
+            buf_mem_sign <= mem_sign;
+            buf_byteOffset <= byteOffset;
+            //Okay we need to buffer ONLY THE READ, since the singals come from ex_mem for the write, but we need the parsing signals for the read during the mem
         end
         // Size / sign-extend the registered word using mem_data + byte offset
         always_comb begin
