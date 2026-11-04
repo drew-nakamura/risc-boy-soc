@@ -44,6 +44,7 @@ module tb_MCU_WRAPPER;
         #200;          // reset held for 200 ns
         BTNC = 1'b0;
         #200000; 
+        //26 to the right, 18 down
         BTNS = 4'b0010;
         #2000000;
         BTNS = 4'b0000;

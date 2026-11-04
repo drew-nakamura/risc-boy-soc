@@ -1,16 +1,10 @@
 #IMEM: 0-FFF
 #WMEM(DRAM): 1000-2FFF
 #VRAM: 3000-3FFF
-	#Player X: 3404
-	#Player Y: 3408
+    #Player X: 3404
+    #Player Y: 3408
 #MMIO: 4000
     #Joy-Con/Buttons: 4000 4LSB
-    #Player X: 4004
-    #Player Y: 4008
-    #Goal X: 400C
-    #Goal Y: 4010
-    #Goal X-wards size: 4014
-    #Goal Y-wards size: 4018
 
 .data
 # LEVEL ONE MAP (20 words)
@@ -52,6 +46,9 @@ WIN:
 LEVEL: 
     .word 1
     
+GOAL_INFO:
+    .space 16
+    
 .text
 
 main:
@@ -64,7 +61,7 @@ game_loop:
     li t3, 0x4000	# Joy-Con MMIO
     lw t4, 0(t3)	# Button Read
     
-    li t0, 0x4000	# MMIO
+    li t0, 0x3400	# Player positions
     lw t1, 4(t0)	# t1 = x position
     lw t2, 8(t0)	# t2 = y position
     
@@ -144,8 +141,8 @@ load_level_1:
     la a1, MAP1           # pointer to MAP
     li a2, 24            # number of words in MAP
     jal copy_map
-    li a0, 2
-    li a1, 2
+    li a0, 27 #changed temporarily from 2 for drews simulation
+    li a1, 21 #this one too
     jal update_player
     li a0, 28
     li a1, 20
@@ -215,7 +212,7 @@ update_player: # a0 = new x, a1 = new y
     
 # Update goal information
 update_goal: # a0 = goal x, a1 = goal y, a2 = goal x size, a3 = goal y size
-    li t0, 0x400C
+    la t0, GOAL_INFO
     sw a0, 0(t0)
     sw a1, 4(t0)
     sw a2, 8(t0)
@@ -235,7 +232,7 @@ check_move: # a0 = old x, a1 = old y, a2 = new x, a3 = new y, a4 = reached goal?
     bgt a3, t1, invalid
     
     # Check if goal reached
-    li   t0, 0x400C      # base of goal info
+    la   t0, GOAL_INFO      # base address of goal info
     lw   t1, 0(t0)           # goal_x
     lw   t2, 4(t0)           # goal_y
     lw   t3, 8(t0)           # goal_x_size

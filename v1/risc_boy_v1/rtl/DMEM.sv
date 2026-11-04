@@ -80,7 +80,7 @@ module DMEM #(
         end
         // Size / sign-extend the registered word using mem_data + byte offset
         always_comb begin
-        case({mem_sign, mem_size,byteOffset})
+        case({buf_mem_sign, buf_mem_size, buf_byteOffset})
             5'b00011: data_out = {{24{memReadWord[31]}},memReadWord[31:24]};  // signed byte
             5'b00010: data_out = {{24{memReadWord[23]}},memReadWord[23:16]};
             5'b00001: data_out = {{24{memReadWord[15]}},memReadWord[15:8]};
