@@ -7,7 +7,7 @@
     #Joy-Con/Buttons: 4000 4LSB
 
 .data
-# LEVEL ONE MAP (20 words)
+# LEVEL ONE MAP (24 words)
 MAP1:
     .word 0,0,0,0
     .word 0,0,0,0
@@ -16,7 +16,7 @@ MAP1:
     .word 0,0,0,0
     .word 0x50000000,0x20000000,0x50000000,0
 
-# LEVEL TWO MAP (20 words)
+# LEVEL TWO MAP (24 words)
 MAP2:
     .word 0,0,0,0
     .word 0,0,0,0
@@ -25,7 +25,7 @@ MAP2:
     .word 0xFFFFFFF0,0,0,0
     .word 0x50000000,0x20000000,0x50000000,0
 
-# LEVEL THREE MAP (20 words)
+# LEVEL THREE MAP (24 words)
 MAP3:
     .word 0x00000000,0x00000000,0x00000000,0x1FFF8FF8
     .word 0x02008808,0x02008808,0xFE008808,0x00208888
@@ -34,7 +34,7 @@ MAP3:
     .word 0x1FFF8888,0x10100880,0x10100880,0x10100880
     .word 0x111FFFF8,0x01000000,0x01000000,0x01000000    
             
-# WIN SCREEN (20 words)
+# WIN SCREEN (24 words)
 WIN:
     .word 0, 0x55555555, 0xAAAAAAAA, 0
     .word 0,0,0,0
@@ -118,16 +118,10 @@ goal_reached:
     j end
     
 to_level_2:
-    la t0, LEVEL
-    li t1, 2
-    sw t1, 0(t0)
     jal load_level_2
     j game_loop
     
 to_level_3:
-    la t0, LEVEL
-    li t1, 3
-    sw t1, 0(t0)
     jal load_level_3
     j game_loop
     
@@ -141,14 +135,16 @@ load_level_1:
     la a1, MAP1           # pointer to MAP
     li a2, 24            # number of words in MAP
     jal copy_map
-    li a0, 27 #changed temporarily from 2 for drews simulation
-    li a1, 21 #this one too
+    li a0, 2 
+    li a1, 2 
     jal update_player
     li a0, 28
     li a1, 20
     li a2, 3
     li a3, 3
     jal update_goal
+    li a0, 1
+    jal update_level
     lw ra, 0(sp)
     addi sp, sp, 4
     ret
@@ -169,6 +165,8 @@ load_level_2:
     li a2, 3
     li a3, 3
     jal update_goal
+    li a0, 2
+    jal update_level
     lw ra, 0(sp)
     addi sp, sp, 4
     ret
@@ -189,6 +187,8 @@ load_level_3:
     li a2, 3
     li a3, 3
     jal update_goal
+    li a0, 3
+    jal update_level
     lw ra, 0(sp)
     addi sp, sp, 4
     ret
@@ -219,9 +219,15 @@ update_goal: # a0 = goal x, a1 = goal y, a2 = goal x size, a3 = goal y size
     sw a3, 12(t0)
     ret
     
+# Update level information
+update_level: # a0 = updated level
+    la t0, LEVEL
+    sw a0, 0(t0)
+    ret
     
 # Check if the move is valid
 check_move: # a0 = old x, a1 = old y, a2 = new x, a3 = new y, a4 = reached goal?
+    li a4, 0 # Initially set output to 0
     
     # Check if it's in bounds
     blt a2, zero, invalid
@@ -276,3 +282,6 @@ end:
     la a1, WIN           # pointer to MAP
     li a2, 24            # number of words in MAP
     jal copy_map
+
+win_loop:
+    j win_loop
