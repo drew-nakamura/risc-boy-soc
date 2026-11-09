@@ -7,6 +7,7 @@ A custom handheld-style game console built from scratch on an FPGA: a pipelined 
 ---
 
 ## Overview
+https://github.com/user-attachments/assets/1289a786-48ac-4d29-9451-572b3553d92e
 
 RISC-Boy v1 is a small system-on-chip (SoC) for the Digilent Basys 3 (Artix-7). A 5-stage pipelined RISC-V CPU runs the game from instruction memory. It reads the board's buttons through memory-mapped I/O and writes the level map and player position into a dual-port Video RAM (VRAM). A Pixel Processing Unit (PPU) reads VRAM on its own port and sends pixels to a VGA controller, which drives a standard 640×480 @ 60 Hz monitor.
 
