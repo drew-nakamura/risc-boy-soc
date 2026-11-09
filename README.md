@@ -24,6 +24,7 @@ The project grows one version at a time. Each version is a complete, playable sy
 ---
 
 ## v1: Complete ✅
+https://github.com/user-attachments/assets/1289a786-48ac-4d29-9451-572b3553d92e
 
 - 5-stage pipelined RV32I CPU with forwarding and hazard detection
 - Memory-mapped I/O through a central interconnect (DMEM, VRAM, buttons, switches)
