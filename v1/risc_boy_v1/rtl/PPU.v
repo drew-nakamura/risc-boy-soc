@@ -22,6 +22,7 @@
 //32x24
 module PPU(
     input CLK_25,
+    input RESET,
     input [9:0] pos_x, //from VGA controller, current pixel to draw
     input [9:0] pos_y, //from VGA controller
     input [31:0] pixel_data, //from VRAM, check for which bits in palette reg
@@ -48,9 +49,11 @@ module PPU(
   
     reg [1:0] INVIS_STATE;
  
-    always@(posedge CLK_25) 
-    begin
+    always@(posedge CLK_25) begin
+    if(RESET) INVIS_STATE <= 2'b00;
+    else begin
     if(video_on == 0) //when in invisibile region
+    begin
     case(INVIS_STATE)
         2'b00: 
             begin
@@ -82,6 +85,7 @@ module PPU(
          default: 
             INVIS_STATE <= 2'b11;
         endcase
+    end
     else
     begin
            INVIS_STATE <= 2'b00;
@@ -112,6 +116,7 @@ module PPU(
            end
         end
     end  
+    end
   
     /*OLD LOGIC, SPRITE LOCATION GIVEN IN BLKS NOT PIXELS!!!
     //VGA speaks in pixels, PPU speaks in blks, trying to decipher if current pixel is within sprite blk

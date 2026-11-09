@@ -57,7 +57,7 @@ module oneshot_hold #(
             else if(arm) begin
                 button_pulse <= sync2;
                 arm <= 1'b0;
-                hold_count <= 50;
+                hold_count <= 45;
             end else if(hold_count) begin
                 button_pulse <= button_pulse;
                 hold_count = hold_count - 1'b1;

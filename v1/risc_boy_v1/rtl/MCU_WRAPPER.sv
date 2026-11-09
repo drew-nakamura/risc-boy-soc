@@ -15,17 +15,12 @@ module MCU_WRAPPER(
      input logic BTNC,
      input logic [3:0] BTNS,
      input logic [15:0] SWITCHES,
-     output logic [15:0] LEDS,
-     output logic [7:0] CATHODES,
-     output logic [3:0] ANODES,
      output logic HSYNC,
      output logic VSYNC,
      output logic [11:0] RGB_pins //TO INTERCONNECT
    );
     //====PARAMETERS=====
     localparam SWITCHES_AD = 32'h11000000;
-    localparam LEDS_AD    = 32'h11000020; //32'h11000020
-    localparam SSEG_AD    = 32'h11000040; //32'h11000040
     localparam BUTTON_AD  = 32'h11000080; //32'h11000080
     localparam VRAM_OFFSET = 32'h00003000;
     //localparam DMEM_OFFSET = 32'h00003F60; //Test all
@@ -35,7 +30,6 @@ module MCU_WRAPPER(
     logic IOBUS_RDEN, IOBUS_WE;
     //===========Seven Segment Dispaly & LED WIRES=========
     //======Registers for buffering outputs==============
-    logic [15:0] r_SSEG;
     logic SSEG_WE, LEDS_WE;
     //=====DMEM WIRES======
     logic [2:0] mem_data;
@@ -58,11 +52,16 @@ module MCU_WRAPPER(
     //====BOARD WIRES=====
     logic clk_50; //50 MHz clock
     logic clk_25; //25 Mhz clock
-    logic s_reset;
+    logic reset_100;
+    logic reset_100_meta;
+    logic reset_25;
+    logic reset_25_meta;
+    logic reset_50;
+    logic reset_50_meta;
     logic [3:0] pulsed_BTNS;
 
    CPU_TOP CPU_TOP(
-        .RST(s_reset),
+        .RST(reset_50),
         .CLK(clk_50),
         .IOBUS_IN(IOBUS_in),
         .mem_data(mem_data),
@@ -95,7 +94,7 @@ module MCU_WRAPPER(
     ) oneshot_hold (
         .clk          (CLK),
         .on           (1'b1),
-        .rst          (s_reset),
+        .rst          (reset_50),
         .button_raw   (BTNS),
         .button_pulse (pulsed_BTNS)
     );
@@ -110,18 +109,9 @@ module MCU_WRAPPER(
         .data_out(DMEM_DATA)
     );
 
-   // Declare Seven Segment Display /////////////////////////////////////////
-   SevSegDisp SSG_DISP (
-       .DATA_IN(r_SSEG),
-       .CLK(CLK),
-       .s_reset(s_reset),
-       .MODE(1'b1),
-       .CATHODES(CATHODES),
-       .ANODES(ANODES)
-   );
-
     VGA_Controller VGA(
         .clk(clk_25),
+        .RESET(reset_25),
         .RGB(RGB), //[11:0] from PPU
         .pos_x(pos_x), //[9:0] to PPU
         .pos_y(pos_y), //[9:0] to PPU
@@ -133,6 +123,7 @@ module MCU_WRAPPER(
 
      PPU PPU_module(
         .CLK_25(clk_25),
+        .RESET(reset_25),
         .pos_x(pos_x), //[9:0] from VGA controller, current pixel to draw
         .pos_y(pos_y), //[9:0] from VGA controller
         
@@ -164,39 +155,33 @@ module MCU_WRAPPER(
         .DOUT1(VRAM_DATA), // CPU
         .DOUT2(pixel_data)//PPU ONLY
     );
-    
-
-
-
-
-
-
-
-
-
-
-
-
                             
-   // Clock Divider to create 50 MHz Clock //////////////////////////////////
-   always_ff @(posedge CLK) begin
-        if(BTNC) begin
-          clk_50 <= 1'b0;
-          VID_ON <= 1'b0;
-          clk_25 <= 1'b0;
-        end
-        else begin
-          VID_ON <= 1'b1;
-          clk_50 <= ~clk_50;
-          if(clk_50) clk_25 <= ~clk_25;
-        end
+   // Clock stuff, we need to make it from the board instewad of flip flops later
+   initial begin
+    clk_50 <= 1'b0;
+    clk_25 <= 1'b0;
+    reset_100 <= 1'b0;
+    reset_100_meta <= 1'b0;
+    reset_25 <= 1'b0;
+    reset_25_meta <= 1'b0;
+    reset_50 <= 1'b0;
+    reset_50_meta <= 1'b0;
    end
-
-   always_ff @(negedge clk_50) s_reset <= BTNC; //weird ahh reset for the CPU, i should fix it later
-   
+   always_ff @(posedge CLK) begin
+        reset_100_meta <= BTNC;
+        reset_100 <= reset_100_meta;
+        VID_ON <= 1'b1;
+        clk_50 <= ~clk_50;
+        if(clk_50) clk_25 <= ~clk_25;
+   end
    always_ff @(posedge clk_50) begin
-        if(LEDS_WE) LEDS   <= IOBUS_out[15:0];
-        if(SSEG_WE) r_SSEG <= IOBUS_out[15:0];
-    end
+        reset_50_meta <= BTNC;
+        reset_50 <= reset_50_meta;
+   end
+   always_ff @(posedge clk_25) begin
+        reset_25_meta <= BTNC;
+        reset_25 <= reset_25_meta;
+   end
+   
 
 endmodule

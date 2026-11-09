@@ -28,6 +28,7 @@ module VGA_Controller(
         pixel clock rate - 800 x 525 x 60 = 25.2 MHZ
     */
     input clk, //needs to be 25 MHZ
+    input RESET,
     input [11:0] RGB, //from PPU
     output [9:0] pos_x, //to PPU
     output [9:0] pos_y, //to PPU
@@ -47,6 +48,11 @@ module VGA_Controller(
     always@(posedge clk) //every clk edge, the beam moves across the screen at a new pixel
     begin
         //new row
+    if(RESET) begin
+            h_count <= 0;
+            v_count <= 0;
+    end
+    else begin
         if(h_count == 799) //restart the edge cnt
         begin
             h_count <= 0;
@@ -66,8 +72,7 @@ module VGA_Controller(
         begin
             h_count <= h_count + 1;
         end
-        
-       
+        end
     end
     
     //DECODER
